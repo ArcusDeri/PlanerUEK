@@ -8,6 +8,7 @@ using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
+using HtmlAgilityPack;
 
 namespace PlanerUEK
 {
@@ -19,7 +20,12 @@ namespace PlanerUEK
         {
             Greet();
             int studentGroup = GetStudentGroup();
-            Console.WriteLine(studentGroup);
+            var timeTableLink = CreateTimeTableLink(studentGroup);
+
+            HtmlWeb web = new HtmlWeb();
+            var htmlDoc = web.Load(timeTableLink);
+            var node = htmlDoc.DocumentNode.SelectSingleNode("//body/table");
+            Console.WriteLine(node.Name + "\n" + node.OuterHtml);
             Console.ReadKey();
         }
 
@@ -33,7 +39,9 @@ namespace PlanerUEK
             Console.WriteLine("You typed invalid character, try again.");
             Console.WriteLine("1 -> KrDZIs1011\n2 -> KrDZIs1012\n3 -> KrDZIs1013\n4 -> KrDZIs1014");
         }
-
+        private static string CreateTimeTableLink(int group) {
+            return @"http://planzajec.uek.krakow.pl/index.php?typ=G&id=" + group + "&okres=1";
+        }
         private static int GetStudentGroup() {
             bool isInputValid = false;
             int userInput;
