@@ -15,17 +15,13 @@ namespace PlanerUEK
     class Program
     {
         private enum Groups { IS1011 = 84721, IS1012 = 84731, IS1013 = 84741, IS1014 = 84751 }
+        private static List<Event> Lectures = new List<Event>();
 
         static void Main(string[] args)
         {
             Greet();
-            int studentGroup = GetStudentGroup();
-            var timeTableLink = CreateTimeTableLink(studentGroup);
+            AddLectures();
 
-            HtmlWeb web = new HtmlWeb();
-            var htmlDoc = web.Load(timeTableLink);
-            var node = htmlDoc.DocumentNode.SelectSingleNode("//body/table");
-            Console.WriteLine(node.Name + "\n" + node.OuterHtml);
             Console.ReadKey();
         }
 
@@ -38,6 +34,27 @@ namespace PlanerUEK
             Console.Clear();
             Console.WriteLine("You typed invalid character, try again.");
             Console.WriteLine("1 -> KrDZIs1011\n2 -> KrDZIs1012\n3 -> KrDZIs1013\n4 -> KrDZIs1014");
+        }
+        private static void AddLectures() {
+            var nodes = GetHTMLTableRows();
+            RemoveTableHeader(ref nodes);
+
+            foreach (var node in nodes)
+            {
+                var calendarEvent = SetupNewEvent(node);
+                Lectures.Add(calendarEvent);
+            }
+        }
+        private static Event SetupNewEvent(HtmlNode node) {
+            Event newEvent = new Event();
+            newEvent.Start = CreateEventStartDate(node);
+            newEvent.End = CreateEventEndDate(node);
+            newEvent.Summary = node.SelectSingleNode("./td[3]").InnerText;
+            newEvent.Location = node.SelectSingleNode("./td[6]").InnerText;
+            newEvent.Description = node.SelectSingleNode("./td[4]").InnerText + node.SelectSingleNode("./td[5]").InnerText;
+            newEvent.Reminders = GetEmptyReminders();
+
+            return newEvent;
         }
         private static string CreateTimeTableLink(int group) {
             return @"http://planzajec.uek.krakow.pl/index.php?typ=G&id=" + group + "&okres=1";
@@ -71,6 +88,46 @@ namespace PlanerUEK
                 }
             }
             return 0;
+        }
+        private static void RemoveTableHeader(ref HtmlNodeCollection nodes) {
+            nodes.RemoveAt(0);
+        }
+        private static HtmlNodeCollection GetHTMLTableRows() {
+            int studentGroup = GetStudentGroup();
+            var timeTableLink = CreateTimeTableLink(studentGroup);
+
+            HtmlWeb web = new HtmlWeb();
+            var htmlDoc = web.Load(timeTableLink);
+            var nodes = htmlDoc.DocumentNode.SelectNodes("//body/table/tr");
+            return nodes;
+        }
+        private static EventDateTime CreateEventStartDate(HtmlNode node) {
+            string DateFormat = "yyyy-MM-dd HH:mm";
+            var startEventDT = new EventDateTime();
+            var providingDT = new DateTime();
+            var stringDate = node.SelectSingleNode("./td[1]").InnerText + " " + node.SelectSingleNode("./td[2]").InnerText.Substring(3,5);
+            providingDT = DateTime.ParseExact(stringDate, DateFormat, null);
+
+            startEventDT.DateTime = providingDT;
+            startEventDT.TimeZone = "Europe/Warsaw";
+            return startEventDT;
+        }
+        private static EventDateTime CreateEventEndDate(HtmlNode node) {
+            string DateFormat = "yyyy-MM-dd HH:mm";
+            var endEventDT = new EventDateTime();
+            var providingDT = new DateTime();
+            var stringDate = node.SelectSingleNode("./td[1]").InnerText + " " + node.SelectSingleNode("./td[2]").InnerText.Substring(11, 5);
+            providingDT = DateTime.ParseExact(stringDate, DateFormat, null);
+
+            endEventDT.DateTime = providingDT;
+            endEventDT.TimeZone = "Europe/Warsaw";
+            return endEventDT;
+        }
+        private static Event.RemindersData GetEmptyReminders()
+        {
+            var reminders = new Event.RemindersData();
+            reminders.UseDefault = false;
+            return reminders;
         }
     }
 }
