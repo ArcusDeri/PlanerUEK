@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
@@ -14,14 +16,18 @@ namespace PlanerUEK
 {
     class Program
     {
+        // If modifying these scopes, delete your previously saved credentials
+        // at ~/.credentials/calendar-dotnet-quickstart.json
+        private static string[] Scopes = { CalendarService.Scope.Calendar };
+        private static string ApplicationName = "PlanerUEK";
         private enum Groups { IS1011 = 84721, IS1012 = 84731, IS1013 = 84741, IS1014 = 84751 }
         private static List<Event> Lectures = new List<Event>();
 
         static void Main(string[] args)
         {
             Greet();
-            AddLectures();
-            Console.WriteLine(Lectures.Count);
+            AddLecturesToList();
+            AddEventsToCalendar(Lectures);
             Console.ReadKey();
         }
 
@@ -35,7 +41,7 @@ namespace PlanerUEK
             Console.WriteLine("You typed invalid character, try again.");
             Console.WriteLine("1 -> KrDZIs1011\n2 -> KrDZIs1012\n3 -> KrDZIs1013\n4 -> KrDZIs1014");
         }
-        private static void AddLectures() {
+        private static void AddLecturesToList() {
             var nodes = GetHTMLTableRows();
             RemoveTableHeader(ref nodes);
 
@@ -49,16 +55,20 @@ namespace PlanerUEK
                 Lectures.Add(calendarEvent);
             }
         }
-        private static Event SetupNewEvent(HtmlNode node) {
-            Event newEvent = new Event();
-            newEvent.Start = CreateEventStartDate(node);
-            newEvent.End = CreateEventEndDate(node);
-            newEvent.Summary = node.SelectSingleNode("./td[3]").InnerText;
-            newEvent.Location = node.SelectSingleNode("./td[6]").InnerText;
-            newEvent.Description = node.SelectSingleNode("./td[4]").InnerText + node.SelectSingleNode("./td[5]").InnerText;
-            newEvent.Reminders = GetEmptyReminders();
+        private static void RemoveTableHeader(ref HtmlNodeCollection nodes) {
+            nodes.RemoveAt(0);
+        }
+        private static void AddEventsToCalendar(List<Event> eventList) {
+            var credential = GoogleSetup();
+            var service = GetCalendarService(credential);
 
-            return newEvent;
+            Console.WriteLine(eventList.Count);
+            foreach (var eventItem in eventList)
+            {
+                var request = service.Events.Insert(eventItem, "primary");
+                var res = request.Execute();
+                Console.WriteLine("Created new event in calendar:\n{0} {1} {2} {3}",eventItem.Start.DateTime, eventItem.Summary, eventItem.Description, eventItem.Location);
+            }
         }
         private static string CreateTimeTableLink(int group) {
             return @"http://planzajec.uek.krakow.pl/index.php?typ=G&id=" + group + "&okres=1";
@@ -93,8 +103,46 @@ namespace PlanerUEK
             }
             return 0;
         }
-        private static void RemoveTableHeader(ref HtmlNodeCollection nodes) {
-            nodes.RemoveAt(0);
+        private static Event SetupNewEvent(HtmlNode node)
+        {
+            Event newEvent = new Event();
+            newEvent.Start = CreateEventStartDate(node);
+            newEvent.End = CreateEventEndDate(node);
+            newEvent.Summary = node.SelectSingleNode("./td[3]").InnerText;
+            newEvent.Location = node.SelectSingleNode("./td[6]").InnerText;
+            newEvent.Description = node.SelectSingleNode("./td[4]").InnerText +" " + node.SelectSingleNode("./td[5]").InnerText;
+            newEvent.Reminders = GetEmptyReminders();
+
+            return newEvent;
+        }
+        private static UserCredential GoogleSetup()
+        {
+            UserCredential credential;
+            using (var stream = new FileStream("client_secret.json", FileMode.Open, FileAccess.Read))
+            {
+                string credPath = System.Environment.GetFolderPath(
+                    System.Environment.SpecialFolder.Personal);
+                credPath = Path.Combine(credPath, @".credentials\PlanerUEK.json");
+
+                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    GoogleClientSecrets.Load(stream).Secrets,
+                    Scopes,
+                    "user",
+                    CancellationToken.None,
+                    new FileDataStore(credPath, true)).Result;
+                Console.WriteLine("Credential file saved to: " + credPath);
+            }
+            return credential;
+        }
+        private static CalendarService GetCalendarService(UserCredential credential)
+        {
+            // Create Google Calendar API service.
+            var service = new CalendarService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = ApplicationName,
+            });
+            return service;
         }
         private static HtmlNodeCollection GetHTMLTableRows() {
             int studentGroup = GetStudentGroup();
