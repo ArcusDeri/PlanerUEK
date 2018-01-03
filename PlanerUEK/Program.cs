@@ -21,7 +21,7 @@ namespace PlanerUEK
         {
             Greet();
             AddLectures();
-
+            Console.WriteLine(Lectures.Count);
             Console.ReadKey();
         }
 
@@ -41,6 +41,10 @@ namespace PlanerUEK
 
             foreach (var node in nodes)
             {
+                if (node.HasClass("czerwony"))          //This class is used to change text color of postponed lectures.
+                    continue;
+                if (node.SelectSingleNode("./td[4]").InnerText == "lektorat")//Do not add foreign language classes.
+                    continue;
                 var calendarEvent = SetupNewEvent(node);
                 Lectures.Add(calendarEvent);
             }
