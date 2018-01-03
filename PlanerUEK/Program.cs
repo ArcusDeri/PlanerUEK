@@ -34,13 +34,15 @@ namespace PlanerUEK
         private static void Greet() {
             Console.WriteLine("Welcome to Planer UEK! In order to save your classes in your Google Calendar you have to choose your student group.");
             Console.WriteLine("Type in corresponding number and hit Enter: ");
-            Console.WriteLine("1 -> KrDZIs1011\n2 -> KrDZIs1012\n3 -> KrDZIs1013\n4 -> KrDZIs1014");
+            Console.WriteLine("1 -> KrDZIs1011\n2 -> KrDZIs1012\n3 -> KrDZIs1013\n4 -> KrDZIs1014\n\n5 -> Logout Google Account");
         }
+
         private static void ShowIncorrectInputMessage() {
             Console.Clear();
             Console.WriteLine("You typed invalid character, try again.");
             Console.WriteLine("1 -> KrDZIs1011\n2 -> KrDZIs1012\n3 -> KrDZIs1013\n4 -> KrDZIs1014");
         }
+
         private static void AddLecturesToList() {
             var nodes = GetHTMLTableRows();
             RemoveTableHeader(ref nodes);
@@ -55,9 +57,11 @@ namespace PlanerUEK
                 Lectures.Add(calendarEvent);
             }
         }
+
         private static void RemoveTableHeader(ref HtmlNodeCollection nodes) {
             nodes.RemoveAt(0);
         }
+
         private static void AddEventsToCalendar(List<Event> eventList) {
             var credential = GoogleSetup();
             var service = GetCalendarService(credential);
@@ -68,11 +72,15 @@ namespace PlanerUEK
                 var request = service.Events.Insert(eventItem, "primary");
                 var res = request.Execute();
                 Console.WriteLine("Created new event in calendar:\n{0} {1} {2} {3}",eventItem.Start.DateTime, eventItem.Summary, eventItem.Description, eventItem.Location);
+
             }
+            
         }
+
         private static string CreateTimeTableLink(int group) {
             return @"http://planzajec.uek.krakow.pl/index.php?typ=G&id=" + group + "&okres=1";
         }
+
         private static int GetStudentGroup() {
             bool isInputValid = false;
             int userInput;
@@ -91,6 +99,8 @@ namespace PlanerUEK
                             return (int) Groups.IS1013;
                         case 4:
                             return (int) Groups.IS1014;
+                        case 5:
+                            return 0;
                         default:
                             ShowIncorrectInputMessage();
                             break;
@@ -103,6 +113,7 @@ namespace PlanerUEK
             }
             return 0;
         }
+
         private static Event SetupNewEvent(HtmlNode node)
         {
             Event newEvent = new Event();
@@ -115,6 +126,7 @@ namespace PlanerUEK
 
             return newEvent;
         }
+
         private static UserCredential GoogleSetup()
         {
             UserCredential credential;
@@ -134,6 +146,7 @@ namespace PlanerUEK
             }
             return credential;
         }
+
         private static CalendarService GetCalendarService(UserCredential credential)
         {
             // Create Google Calendar API service.
@@ -144,8 +157,13 @@ namespace PlanerUEK
             });
             return service;
         }
+
         private static HtmlNodeCollection GetHTMLTableRows() {
             int studentGroup = GetStudentGroup();
+            if (studentGroup == 0){
+                LogoutFromGoogle();
+                Main(new string[0]);
+            }
             var timeTableLink = CreateTimeTableLink(studentGroup);
 
             HtmlWeb web = new HtmlWeb();
@@ -153,6 +171,17 @@ namespace PlanerUEK
             var nodes = htmlDoc.DocumentNode.SelectNodes("//body/table/tr");
             return nodes;
         }
+
+        private static void LogoutFromGoogle()
+        {
+            string credPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            if (Directory.Exists(Path.Combine(credPath, @".credentials\PlanerUEK.json")))
+                Directory.Delete(Path.Combine(credPath, @".credentials\PlanerUEK.json"), true);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Logout successful.");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
         private static EventDateTime CreateEventStartDate(HtmlNode node) {
             string DateFormat = "yyyy-MM-dd HH:mm";
             var startEventDT = new EventDateTime();
@@ -164,6 +193,7 @@ namespace PlanerUEK
             startEventDT.TimeZone = "Europe/Warsaw";
             return startEventDT;
         }
+
         private static EventDateTime CreateEventEndDate(HtmlNode node) {
             string DateFormat = "yyyy-MM-dd HH:mm";
             var endEventDT = new EventDateTime();
@@ -175,11 +205,13 @@ namespace PlanerUEK
             endEventDT.TimeZone = "Europe/Warsaw";
             return endEventDT;
         }
+
         private static Event.RemindersData GetEmptyReminders()
         {
             var reminders = new Event.RemindersData();
             reminders.UseDefault = false;
             return reminders;
         }
+
     }
 }
