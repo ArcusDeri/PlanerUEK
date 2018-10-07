@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
@@ -18,29 +15,37 @@ namespace PlanerUEK
     {
         // If modifying these scopes, delete your previously saved credentials
         // at ~/.credentials/calendar-dotnet-quickstart.json
-        private static string[] Scopes = { CalendarService.Scope.Calendar };
-        private static string ApplicationName = "PlanerUEK";
-        private enum Groups { IS1011 = 84721, IS1012 = 84731, IS1013 = 84741, IS1014 = 84751 }
-        private static List<Event> Lectures = new List<Event>();
+        private static string[] _scopes = { CalendarService.Scope.Calendar };
+        private static string _applicationName = "PlanerUEK";
+        private enum _groups { IS2011 = 84721, IS2012 = 84731, IS2013 = 94411 }
+        private static List<Event> _lectures = new List<Event>();
 
         static void Main(string[] args)
         {
             Greet();
             AddLecturesToList();
-            AddEventsToCalendar(Lectures);
+            AddEventsToCalendar(_lectures);
             Console.ReadKey();
         }
 
         private static void Greet() {
             Console.WriteLine("Welcome to Planer UEK! In order to save your classes in your Google Calendar you have to choose your student group.");
             Console.WriteLine("Type in corresponding number and hit Enter: ");
-            Console.WriteLine("1 -> KrDZIs1011\n2 -> KrDZIs1012\n3 -> KrDZIs1013\n4 -> KrDZIs1014\n\n5 -> Logout Google Account");
+            WriteMenuOptions();
+        }
+        
+        private static void WriteMenuOptions()
+        {
+            Console.WriteLine("1 -> KrDZIs2011");
+            Console.WriteLine("2 -> KrDZIs2012");
+            Console.WriteLine("3 -> KrDZIs2013");
+            Console.WriteLine("4 -> Logout from Google");
         }
 
         private static void ShowIncorrectInputMessage() {
             Console.Clear();
             Console.WriteLine("You typed invalid character, try again.");
-            Console.WriteLine("1 -> KrDZIs1011\n2 -> KrDZIs1012\n3 -> KrDZIs1013\n4 -> KrDZIs1014");
+            WriteMenuOptions();
         }
 
         private static void AddLecturesToList() {
@@ -51,10 +56,12 @@ namespace PlanerUEK
             {
                 if (node.HasClass("czerwony"))          //This class is used to change text color of postponed lectures.
                     continue;
-                if (node.SelectSingleNode("./td[4]").InnerText == "lektorat")//Do not add foreign language classes.
+                if(node.ChildNodes.Count != 13)
+                    continue;
+                if (node.SelectSingleNode("./td[3]").InnerText.Contains("obcy"))//Do not add foreign language classes.
                     continue;
                 var calendarEvent = SetupNewEvent(node);
-                Lectures.Add(calendarEvent);
+                _lectures.Add(calendarEvent);
             }
         }
 
@@ -70,13 +77,11 @@ namespace PlanerUEK
             foreach (var eventItem in eventList)
             {
                 var request = service.Events.Insert(eventItem, "primary");
-                var res = request.Execute();
                 Console.WriteLine("Created new event in calendar:\n{0} {1} {2} {3}",eventItem.Start.DateTime, eventItem.Summary, eventItem.Description, eventItem.Location);
-
+                var res = request.Execute();
             }
             
         }
-
         private static string CreateTimeTableLink(int group) {
             return @"http://planzajec.uek.krakow.pl/index.php?typ=G&id=" + group + "&okres=1";
         }
@@ -92,14 +97,12 @@ namespace PlanerUEK
                     switch (userInput)
                     {
                         case 1:
-                            return (int) Groups.IS1011;
+                            return (int) _groups.IS2011;
                         case 2:
-                            return (int) Groups.IS1012;
+                            return (int) _groups.IS2012;
                         case 3:
-                            return (int) Groups.IS1013;
+                            return (int) _groups.IS2013;
                         case 4:
-                            return (int) Groups.IS1014;
-                        case 5:
                             return 0;
                         default:
                             ShowIncorrectInputMessage();
@@ -138,7 +141,7 @@ namespace PlanerUEK
 
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
-                    Scopes,
+                    _scopes,
                     "user",
                     CancellationToken.None,
                     new FileDataStore(credPath, true)).Result;
@@ -153,7 +156,7 @@ namespace PlanerUEK
             var service = new CalendarService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
-                ApplicationName = ApplicationName,
+                ApplicationName = _applicationName,
             });
             return service;
         }
