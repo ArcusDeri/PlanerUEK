@@ -17,7 +17,7 @@ namespace PlanerUEK
         // at ~/.credentials/calendar-dotnet-quickstart.json
         private static string[] _scopes = { CalendarService.Scope.Calendar };
         private static string _applicationName = "PlanerUEK";
-        private enum _groups { IS2011 = 84721, IS2012 = 84731, IS2013 = 94411 }
+        private enum _groups { IO2011 = 100041, SI2011 = 100031 }
         private static List<Event> _lectures = new List<Event>();
 
         static void Main(string[] args)
@@ -36,10 +36,9 @@ namespace PlanerUEK
         
         private static void WriteMenuOptions()
         {
-            Console.WriteLine("1 -> KrDZIs2011");
-            Console.WriteLine("2 -> KrDZIs2012");
-            Console.WriteLine("3 -> KrDZIs2013");
-            Console.WriteLine("4 -> Logout from Google");
+            Console.WriteLine("1 -> KrDZIs2011IO");
+            Console.WriteLine("2 -> KrDZIs2011SI");
+            Console.WriteLine("3 -> Logout from Google");
         }
 
         private static void ShowIncorrectInputMessage() {
@@ -97,12 +96,10 @@ namespace PlanerUEK
                     switch (userInput)
                     {
                         case 1:
-                            return (int) _groups.IS2011;
+                            return (int) _groups.IO2011;
                         case 2:
-                            return (int) _groups.IS2012;
+                            return (int) _groups.SI2011;
                         case 3:
-                            return (int) _groups.IS2013;
-                        case 4:
                             return 0;
                         default:
                             ShowIncorrectInputMessage();
