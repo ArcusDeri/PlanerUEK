@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace PlanerUek.ClientApp
+namespace PlanerUek.Website
 {
     public class Startup
     {

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanerUek.ClientApp", "PlanerUek.ClientApp\PlanerUek.ClientApp.csproj", "{5B804289-14EE-4E26-8AB8-B1C723CAC470}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanerUek.Website", "PlanerUek.Website\PlanerUek.Website.csproj", "{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5B804289-14EE-4E26-8AB8-B1C723CAC470}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B804289-14EE-4E26-8AB8-B1C723CAC470}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B804289-14EE-4E26-8AB8-B1C723CAC470}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B804289-14EE-4E26-8AB8-B1C723CAC470}.Release|Any CPU.Build.0 = Release|Any CPU
+		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

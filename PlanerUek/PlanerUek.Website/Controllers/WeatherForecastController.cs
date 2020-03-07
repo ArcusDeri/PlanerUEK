@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace PlanerUek.ClientApp.Controllers
+namespace PlanerUek.Website.Controllers
 {
     [ApiController]
     [Route("[controller]")]

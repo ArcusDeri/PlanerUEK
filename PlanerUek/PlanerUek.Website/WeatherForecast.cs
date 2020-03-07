@@ -1,6 +1,6 @@
 using System;
 
-namespace PlanerUek.ClientApp
+namespace PlanerUek.Website
 {
     public class WeatherForecast
     {
