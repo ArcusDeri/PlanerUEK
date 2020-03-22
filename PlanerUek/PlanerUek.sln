@@ -9,12 +9,18 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Development|Any CPU = Development|Any CPU
+		Production|Any CPU = Production|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Development|Any CPU.Build.0 = Development|Any CPU
+		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Release|Any CPU.ActiveCfg = Production|Any CPU
+		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Release|Any CPU.Build.0 = Production|Any CPU
+		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Production|Any CPU.Build.0 = Production|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
