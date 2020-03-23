@@ -2,6 +2,8 @@
 {
     public interface IPlanerConfig
     {
-        string EnvironmentName();
+        string GetEnvironmentName();
+        string GetStudentGroupsStorageAccountName();
+        string GetStudentGroupsStorageAccountKey();
     }
 }

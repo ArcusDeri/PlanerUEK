@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanerUek.Website", "PlanerUek.Website\PlanerUek.Website.csproj", "{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanerUek.Storage", "PlanerUek.Storage\PlanerUek.Storage.csproj", "{32F172DC-79F4-45BA-957E-034769966E10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,14 @@ Global
 		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Release|Any CPU.Build.0 = Production|Any CPU
 		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Production|Any CPU.ActiveCfg = Production|Any CPU
 		{099F9A5A-F72F-4FEC-BA34-45A7EE93DA9C}.Production|Any CPU.Build.0 = Production|Any CPU
+		{32F172DC-79F4-45BA-957E-034769966E10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32F172DC-79F4-45BA-957E-034769966E10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32F172DC-79F4-45BA-957E-034769966E10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32F172DC-79F4-45BA-957E-034769966E10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32F172DC-79F4-45BA-957E-034769966E10}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{32F172DC-79F4-45BA-957E-034769966E10}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{32F172DC-79F4-45BA-957E-034769966E10}.Production|Any CPU.ActiveCfg = Debug|Any CPU
+		{32F172DC-79F4-45BA-957E-034769966E10}.Production|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

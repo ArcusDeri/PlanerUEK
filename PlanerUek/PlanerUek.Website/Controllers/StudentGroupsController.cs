@@ -17,7 +17,7 @@ namespace PlanerUek.Website.Controllers
         [HttpPost(nameof(HandleTimetableForGroup))]
         public IActionResult HandleTimetableForGroup([FromForm]string groupName)
         {
-            var envName = _config.EnvironmentName();
+            var envName = _config.GetEnvironmentName();
             
             return Ok();
         }
