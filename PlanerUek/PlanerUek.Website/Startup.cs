@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,12 +25,11 @@ namespace PlanerUek.Website
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var studentGroupsStorageAccountName = _planerConfig.GetStudentGroupsStorageAccountName();
-            var studentGroupsStorageAccountKey = _planerConfig.GetStudentGroupsStorageAccountKey();
+            var studentGroupsStorageConnectionString = _planerConfig.GetStudentGroupsStorageConnectionString();
 
             services.AddControllersWithViews();
             services.AddTransient<IStudentGroupsRepository>(x =>
-                new StudentGroupsRepository(studentGroupsStorageAccountName, studentGroupsStorageAccountKey));
+                new StudentGroupsRepository(studentGroupsStorageConnectionString));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });

@@ -1,29 +1,26 @@
-﻿using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
+﻿using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using PlanerUek.Storage.Extensions;
 using PlanerUek.Storage.Interfaces;
+using PlanerUek.Storage.Models;
 
 namespace PlanerUek.Storage.Repositories
 {
     public class StudentGroupsRepository : IStudentGroupsRepository
     {
-        private readonly string _accountName;
-        private readonly string _accountKey;
         private readonly CloudTable _table;
-        
-        public StudentGroupsRepository(string accountName, string accountKey)
+
+        public StudentGroupsRepository(string connectionString)
         {
-            _accountName = accountName;
-            _accountKey = accountKey;
-            _table = GetTable();
+            _table = GetTable(connectionString);
         }
 
-        private CloudTable GetTable()
+        private CloudTable GetTable(string connectionString)
         {
             try
             {
-                var credentials = new StorageCredentials(_accountName, _accountKey);
-                var account = new CloudStorageAccount(credentials, useHttps: true);
+                var account = CloudStorageAccount.Parse(connectionString);
                 var client = account.CreateCloudTableClient();
                 var table = client.GetTableReference("PlanerUekStudentGroups");
 
@@ -34,6 +31,14 @@ namespace PlanerUek.Storage.Repositories
                 //TODO: log error
                 return null;
             }
+        }
+
+        public async Task<string> GetGroupId(string groupName)
+        {
+            groupName = groupName.ToLower();
+            var result = await _table.Retrieve<StudentGroupEntity>(groupName, groupName);
+
+            return result.Id;
         }
     }
 }

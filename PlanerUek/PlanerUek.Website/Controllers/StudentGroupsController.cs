@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PlanerUek.Website.Configuration;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using PlanerUek.Storage.Interfaces;
 
 namespace PlanerUek.Website.Controllers
 {
@@ -7,18 +8,18 @@ namespace PlanerUek.Website.Controllers
     [Route("api/[controller]")]
     public class StudentGroupsController : ControllerBase
     {
-        private readonly IPlanerConfig _config;
+        private readonly IStudentGroupsRepository _studentGroupsRepository;
 
-        public StudentGroupsController(IPlanerConfig config)
+        public StudentGroupsController(IStudentGroupsRepository studentGroupsRepository)
         {
-            _config = config;
+            _studentGroupsRepository = studentGroupsRepository;
         }
 
         [HttpPost(nameof(HandleTimetableForGroup))]
-        public IActionResult HandleTimetableForGroup([FromForm]string groupName)
+        public async Task<IActionResult> HandleTimetableForGroup([FromForm] string groupName)
         {
-            var envName = _config.GetEnvironmentName();
-            
+            var groupId = await _studentGroupsRepository.GetGroupId(groupName);
+
             return Ok();
         }
     }

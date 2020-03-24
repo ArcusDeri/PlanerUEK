@@ -12,9 +12,7 @@ namespace PlanerUek.Website.Configuration
         }
         
         public string GetEnvironmentName() => _config["PlanerUek:Env"];
-        
-        public string GetStudentGroupsStorageAccountName() => _config["PlanerUek:TableStorage:StudentGroups:AccountName"];
 
-        public string GetStudentGroupsStorageAccountKey() => _config["PlanerUek:TableStorage:StudentGroups:AccountKey"];
+        public string GetStudentGroupsStorageConnectionString() => _config["PlanerUek:TableStorage:StudentGroupsConnectionString"];
     }
 }
