@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PlanerUek.Storage.Interfaces;
+using PlanerUek.Storage.Providers;
 using PlanerUek.Storage.Repositories;
 using PlanerUek.Website.Configuration;
 
@@ -26,10 +27,13 @@ namespace PlanerUek.Website
         public void ConfigureServices(IServiceCollection services)
         {
             var studentGroupsStorageConnectionString = _planerConfig.GetStudentGroupsStorageConnectionString();
+            var studentGroupScheduleEndpointTemplate = _planerConfig.GetStudentGroupScheduleTemplate();
 
             services.AddControllersWithViews();
             services.AddTransient<IStudentGroupsRepository>(x =>
                 new StudentGroupsRepository(studentGroupsStorageConnectionString));
+            services.AddTransient<IStudentGroupScheduleProvider>(x =>
+                new StudentGroupScheduleProvider(studentGroupScheduleEndpointTemplate));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });

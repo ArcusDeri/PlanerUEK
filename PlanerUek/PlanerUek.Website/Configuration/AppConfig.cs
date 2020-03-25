@@ -14,5 +14,6 @@ namespace PlanerUek.Website.Configuration
         public string GetEnvironmentName() => _config["PlanerUek:Env"];
 
         public string GetStudentGroupsStorageConnectionString() => _config["PlanerUek:TableStorage:StudentGroupsConnectionString"];
+        public string GetStudentGroupScheduleTemplate() => _config["PlanerUek:StudentGroupScheduleEndpointTemplate"];
     }
 }

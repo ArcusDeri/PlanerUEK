@@ -4,5 +4,6 @@
     {
         string GetEnvironmentName();
         string GetStudentGroupsStorageConnectionString();
+        string GetStudentGroupScheduleTemplate();
     }
 }
