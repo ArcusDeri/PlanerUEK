@@ -38,7 +38,7 @@ namespace PlanerUek.Storage.Repositories
             groupName = groupName.ToLower();
             var result = await _table.Retrieve<StudentGroupEntity>(groupName, groupName);
 
-            return result.Id;
+            return result is null ? string.Empty: result.Id;
         }
     }
 }

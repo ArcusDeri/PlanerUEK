@@ -22,6 +22,10 @@ namespace PlanerUek.Website.Controllers
         public async Task<IActionResult> HandleTimetableForGroup([FromForm] string groupName)
         {
             var groupId = await _studentGroupsRepository.GetGroupId(groupName);
+            if (string.IsNullOrEmpty(groupName))
+            {
+                return Ok();
+            }
             var schedule = _scheduleProvider.GetSchedule(groupId);
 
             return Ok();
