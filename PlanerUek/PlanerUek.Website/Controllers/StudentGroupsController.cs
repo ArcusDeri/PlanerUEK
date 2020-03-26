@@ -26,7 +26,7 @@ namespace PlanerUek.Website.Controllers
             {
                 return Ok();
             }
-            var schedule = _scheduleProvider.GetSchedule(groupId);
+            var schedule = _scheduleProvider.GetCurrentSchedule(groupId);
 
             return Ok();
         }
