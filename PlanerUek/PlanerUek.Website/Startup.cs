@@ -8,6 +8,7 @@ using PlanerUek.Storage.Interfaces;
 using PlanerUek.Storage.Providers;
 using PlanerUek.Storage.Repositories;
 using PlanerUek.Website.Configuration;
+using PlanerUek.Website.Services;
 
 namespace PlanerUek.Website
 {
@@ -30,6 +31,7 @@ namespace PlanerUek.Website
             var studentGroupScheduleEndpointTemplate = _planerConfig.GetStudentGroupScheduleTemplate();
 
             services.AddControllersWithViews();
+            services.AddTransient<IGoogleCalendar, GoogleCalendar>();
             services.AddTransient<IStudentGroupsRepository>(x =>
                 new StudentGroupsRepository(studentGroupsStorageConnectionString));
             services.AddTransient<IStudentGroupScheduleProvider>(x =>
