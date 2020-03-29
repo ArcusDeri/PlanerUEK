@@ -1,15 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Calendar.v3;
 using PlanerUek.Storage.Models;
 using PlanerUek.Website.Models;
 using Google.Apis.Calendar.v3.Data;
+using Google.Apis.Util.Store;
+using PlanerUek.Website.Configuration;
 
 namespace PlanerUek.Website.Services
 {
     public class GoogleCalendar : IGoogleCalendar
     {
+        private readonly IPlanerConfig _planerConfig;
+
+        public GoogleCalendar(IPlanerConfig planerConfig)
+        {
+            _planerConfig = planerConfig;
+        }
+
         public CalendarUpdateResult AddStudentGroupSchedule(StudentGroupSchedule schedule)
         {
             var calendarEvents = ResolveEventsFromSchedule(schedule);
@@ -45,8 +56,13 @@ namespace PlanerUek.Website.Services
 
         private UserCredential AuthorizeGoogleUser()
         {
-            //return GoogleWebAuthorizationBroker.AuthorizeAsync();
-            throw new NotImplementedException();
+            var cred = new ClientSecrets()
+            {
+                ClientId = _planerConfig.GetGoogleClientId(),
+                ClientSecret = _planerConfig.GetGoogleClientSecret()
+            };
+            return GoogleWebAuthorizationBroker.AuthorizeAsync(cred, new[] {CalendarService.Scope.Calendar}, "user",
+                CancellationToken.None, new NullDataStore()).Result;
         }
     }
 }

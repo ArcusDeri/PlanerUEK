@@ -31,6 +31,7 @@ namespace PlanerUek.Website
             var studentGroupScheduleEndpointTemplate = _planerConfig.GetStudentGroupScheduleTemplate();
 
             services.AddControllersWithViews();
+            services.AddTransient<IPlanerConfig, AppConfig>();
             services.AddTransient<IGoogleCalendar, GoogleCalendar>();
             services.AddTransient<IStudentGroupsRepository>(x =>
                 new StudentGroupsRepository(studentGroupsStorageConnectionString));
