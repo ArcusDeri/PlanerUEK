@@ -5,5 +5,7 @@
         string GetEnvironmentName();
         string GetStudentGroupsStorageConnectionString();
         string GetStudentGroupScheduleTemplate();
+        string GetGoogleClientId();
+        string GetGoogleClientSecret();
     }
 }

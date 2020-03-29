@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Google.Apis.Auth.OAuth2;
 using PlanerUek.Storage.Models;
 using PlanerUek.Website.Models;
 using Google.Apis.Calendar.v3.Data;
@@ -12,6 +13,7 @@ namespace PlanerUek.Website.Services
         public CalendarUpdateResult AddStudentGroupSchedule(StudentGroupSchedule schedule)
         {
             var calendarEvents = ResolveEventsFromSchedule(schedule);
+            var credentials = AuthorizeGoogleUser();
             throw new System.NotImplementedException();
         }
 
@@ -39,6 +41,12 @@ namespace PlanerUek.Website.Services
                 TimeZone = "Europe/Warsaw",
                 DateTime = new DateTime(date.Year, date.Month, date.Day, hourDate.Hour, hourDate.Minute, 0)
             };
+        }
+
+        private UserCredential AuthorizeGoogleUser()
+        {
+            //return GoogleWebAuthorizationBroker.AuthorizeAsync();
+            throw new NotImplementedException();
         }
     }
 }

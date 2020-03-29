@@ -15,5 +15,7 @@ namespace PlanerUek.Website.Configuration
 
         public string GetStudentGroupsStorageConnectionString() => _config["PlanerUek:TableStorage:StudentGroupsConnectionString"];
         public string GetStudentGroupScheduleTemplate() => _config["PlanerUek:StudentGroupScheduleEndpointTemplate"];
+        public string GetGoogleClientId() => _config["PlanerUek:Credentials:Google:ClientId"];
+        public string GetGoogleClientSecret() => _config["PlanerUek:Credentials:Google:ClientSecret"];
     }
 }
