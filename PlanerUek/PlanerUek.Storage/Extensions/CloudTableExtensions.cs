@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Table;
+using PlanerUek.Storage.Models;
+using PlanerUek.Storage.Repositories;
 
 namespace PlanerUek.Storage.Extensions
 {
@@ -12,6 +15,56 @@ namespace PlanerUek.Storage.Extensions
             var result = (TResult) operationResult.Result;
 
             return result;
+        }
+        
+        public static async Task<object> Retrieve(this CloudTable table, string partitionKey, string rowKey)
+        {
+            var tableOperation = TableOperation.Retrieve(partitionKey, rowKey);
+            var operationResult = await table.ExecuteAsync(tableOperation);
+            return operationResult.Result;
+        }
+
+        public static async Task<bool> Insert(this CloudTable table, TableEntity entity)
+        {
+            var tableOperation = TableOperation.Insert(entity);
+            try
+            {
+                await table.ExecuteAsync(tableOperation);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        public static async Task<bool> Delete(this CloudTable table, string partitionKey, string rowKey)
+        {
+            var entity = new TableEntity(partitionKey, rowKey);
+            var tableOperation = TableOperation.Delete(entity);
+            try
+            {
+                await table.ExecuteAsync(tableOperation);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        public static async Task Clear(this CloudTable table, TableEntity entity)
+        {
+            var query = new TableQuery();
+            var result = await table.ExecuteQuerySegmentedAsync(query, null);
+            
+            var batchOperation = new TableBatchOperation();
+            foreach (var row in result)
+            {
+                batchOperation.Delete(row);
+            }
+
+            await table.ExecuteBatchAsync(batchOperation);
         }
     }
 }

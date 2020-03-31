@@ -15,17 +15,19 @@ namespace PlanerUek.Website.Services
     public class GoogleCalendar : IGoogleCalendar
     {
         private readonly IPlanerConfig _planerConfig;
+        private readonly IDataStore _dataStore;
 
-        public GoogleCalendar(IPlanerConfig planerConfig)
+        public GoogleCalendar(IPlanerConfig planerConfig, IDataStore dataStore)
         {
             _planerConfig = planerConfig;
+            _dataStore = dataStore;
         }
 
         public CalendarUpdateResult AddStudentGroupSchedule(StudentGroupSchedule schedule)
         {
             var calendarEvents = ResolveEventsFromSchedule(schedule);
             var credentials = AuthorizeGoogleUser();
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         private IEnumerable<Event> ResolveEventsFromSchedule(StudentGroupSchedule schedule)
@@ -62,7 +64,7 @@ namespace PlanerUek.Website.Services
                 ClientSecret = _planerConfig.GetGoogleClientSecret()
             };
             return GoogleWebAuthorizationBroker.AuthorizeAsync(cred, new[] {CalendarService.Scope.Calendar}, "user",
-                CancellationToken.None, new NullDataStore()).Result;
+                CancellationToken.None, _dataStore).Result;
         }
     }
 }

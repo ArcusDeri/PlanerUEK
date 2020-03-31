@@ -7,5 +7,6 @@
         string GetStudentGroupScheduleTemplate();
         string GetGoogleClientId();
         string GetGoogleClientSecret();
+        string GetGoogleDataStoreConnectionString();
     }
 }

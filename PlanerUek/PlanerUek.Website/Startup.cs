@@ -1,3 +1,4 @@
+using Google.Apis.Util.Store;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -29,10 +30,13 @@ namespace PlanerUek.Website
         {
             var studentGroupsStorageConnectionString = _planerConfig.GetStudentGroupsStorageConnectionString();
             var studentGroupScheduleEndpointTemplate = _planerConfig.GetStudentGroupScheduleTemplate();
+            var googleDataStoreConnectionString = _planerConfig.GetGoogleDataStoreConnectionString();
 
             services.AddControllersWithViews();
             services.AddTransient<IPlanerConfig, AppConfig>();
             services.AddTransient<IGoogleCalendar, GoogleCalendar>();
+            services.AddTransient<IDataStore>(x => 
+                new GoogleDataStoreRepository(googleDataStoreConnectionString));
             services.AddTransient<IStudentGroupsRepository>(x =>
                 new StudentGroupsRepository(studentGroupsStorageConnectionString));
             services.AddTransient<IStudentGroupScheduleProvider>(x =>

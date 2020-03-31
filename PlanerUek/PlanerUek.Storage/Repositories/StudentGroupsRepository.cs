@@ -4,6 +4,7 @@ using Microsoft.WindowsAzure.Storage.Table;
 using PlanerUek.Storage.Extensions;
 using PlanerUek.Storage.Interfaces;
 using PlanerUek.Storage.Models;
+using PlanerUek.Storage.Providers;
 
 namespace PlanerUek.Storage.Repositories
 {
@@ -13,24 +14,7 @@ namespace PlanerUek.Storage.Repositories
 
         public StudentGroupsRepository(string connectionString)
         {
-            _table = GetTable(connectionString);
-        }
-
-        private CloudTable GetTable(string connectionString)
-        {
-            try
-            {
-                var account = CloudStorageAccount.Parse(connectionString);
-                var client = account.CreateCloudTableClient();
-                var table = client.GetTableReference("PlanerUekStudentGroups");
-
-                return table;
-            }
-            catch
-            {
-                //TODO: log error
-                return null;
-            }
+            _table = CloudTableProvider.GetTable(connectionString, "PlanerUekStudentGroups"); //refactor to IPlanerConfig
         }
 
         public async Task<string> GetGroupId(string groupName)
