@@ -18,5 +18,6 @@ namespace PlanerUek.Website.Configuration
         public string GetGoogleClientId() => _config["PlanerUek:Credentials:Google:ClientId"];
         public string GetGoogleClientSecret() => _config["PlanerUek:Credentials:Google:ClientSecret"];
         public string GetGoogleDataStoreConnectionString() => _config["PlanerUek:TableStorage:GoogleDataStoreConnectionString"];
+        public string GetApplicationName() => _config["PlanerUek:ApplicationName"];
     }
 }

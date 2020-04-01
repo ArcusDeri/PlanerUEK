@@ -8,5 +8,6 @@
         string GetGoogleClientId();
         string GetGoogleClientSecret();
         string GetGoogleDataStoreConnectionString();
+        string GetApplicationName();
     }
 }

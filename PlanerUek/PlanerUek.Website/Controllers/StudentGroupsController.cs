@@ -30,15 +30,8 @@ namespace PlanerUek.Website.Controllers
                 return Ok();
             }
             var schedule = _scheduleProvider.GetCurrentSchedule(groupId);
-            _googleCalendar.AddStudentGroupSchedule(schedule);
+            var result = await _googleCalendar.AddStudentGroupSchedule(schedule);
 
-            return Ok();
-        }
-        
-        [HttpGet(nameof(GoogleResponse))]
-        public async Task<IActionResult> GoogleResponse(string state, string code)
-        {
-            var xd = state;
             return Ok();
         }
     }

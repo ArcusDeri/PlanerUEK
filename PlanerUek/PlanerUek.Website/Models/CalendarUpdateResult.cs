@@ -2,10 +2,17 @@
 {
     public class CalendarUpdateResult
     {
+        public bool IsSuccess { get; }
+        public string ErrorMessage { get; }
+        
         public CalendarUpdateResult(bool isSuccess)
         {
             IsSuccess = isSuccess;
         }
-        public bool IsSuccess { get; }
+
+        public CalendarUpdateResult(string errorMessage)
+        {
+            ErrorMessage = errorMessage;
+        }
     }
 }
