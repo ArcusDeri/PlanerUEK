@@ -26,7 +26,7 @@ namespace PlanerUek.Storage.Providers
             var serializer = new XmlSerializer(typeof(StudentGroupSchedule));
 
             var result = (StudentGroupSchedule) serializer.Deserialize(reader);
-            result.ScheduleClasses.RemoveAll(x => x.Date < DateTime.Now);
+            result.ScheduleClasses.RemoveAll(x => x.Date < DateTime.Now || x.Type.ToLower().Contains("przeniesienie"));
 
             return result;
         }

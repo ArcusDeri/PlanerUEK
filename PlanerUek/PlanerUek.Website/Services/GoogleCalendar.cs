@@ -78,7 +78,6 @@ namespace PlanerUek.Website.Services
         private IEnumerable<Event> ResolveEventsFromSchedule(StudentGroupSchedule schedule)
         {
             var result = schedule.ScheduleClasses
-                .Where(w => !w.Type.ToLower().Contains("przeniesienie"))
                 .Select(x => new Event()
                 {
                     Start = ResolveEventDate(x.Date, x.FromHour),
