@@ -12,13 +12,15 @@ export class Home extends Component {
     };
     
     addScheduleToCalendar = () => {
+        if (this.state.groupName.length === 0){
+            return;
+        }
         Api.post("/api/StudentGroups/HandleTimetableForGroup", {groupName: this.state.groupName})
             .then(result => console.log(result))
             .catch(reason => console.log(reason.message));
     };
     
   render () {
-    const isButtonVisible = this.state.groupName.length > 0;
     return (
       <div>
         <p>
@@ -30,11 +32,14 @@ export class Home extends Component {
             your Google account.
         </p>
           <strong>Try submitting this group: KrDzIs3011Io</strong>
-          <div className="container">
-              <input onChange={this.onTextInput} name="groupNameInput" type="text" placeholder="Enter your student group name"/>
-              {isButtonVisible && (
-                  <button onClick={this.addScheduleToCalendar}>Go!</button>
-              )}
+          <div className="input-group">
+              <div className="input-group-prepend">
+                  <span className="input-group-text" id="">Your student group name</span>
+              </div>
+              <input onChange={this.onTextInput} className="form-control" name="groupNameInput" type="text"/>
+              <div className="input-group-append">
+                  <button className="btn btn-primary" type="button" onClick={this.addScheduleToCalendar}>Go!</button>
+              </div>
           </div>
       </div>
     );
