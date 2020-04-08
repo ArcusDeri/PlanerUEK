@@ -9,5 +9,6 @@
         string GetGoogleClientSecret();
         string GetGoogleDataStoreConnectionString();
         string GetApplicationName();
+        string GetCorsOrigin();
     }
 }

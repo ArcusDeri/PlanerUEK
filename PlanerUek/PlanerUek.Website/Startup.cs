@@ -32,6 +32,7 @@ namespace PlanerUek.Website
             var studentGroupScheduleEndpointTemplate = _planerConfig.GetStudentGroupScheduleTemplate();
             var googleDataStoreConnectionString = _planerConfig.GetGoogleDataStoreConnectionString();
 
+            services.AddCors();
             services.AddControllersWithViews();
             services.AddTransient<IPlanerConfig, AppConfig>();
             services.AddTransient<IGoogleCalendar, GoogleCalendar>();
@@ -65,7 +66,10 @@ namespace PlanerUek.Website
             app.UseSpaStaticFiles();
 
             app.UseRouting();
-
+            app.UseCors(builder => builder
+                .WithOrigins(_planerConfig.GetCorsOrigin())
+                .AllowAnyHeader()
+                .AllowAnyMethod());
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseSpa(spa =>

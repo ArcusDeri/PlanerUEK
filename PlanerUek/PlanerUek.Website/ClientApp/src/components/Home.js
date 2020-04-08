@@ -1,9 +1,24 @@
 import React, { Component } from 'react';
+import Api from "../utils/api";
 
 export class Home extends Component {
-  static displayName = Home.name;
-
+    state = {
+        groupName: ''
+    };
+    
+    onTextInput = event => {
+        const groupName = event.target.value;
+        this.setState({groupName});
+    };
+    
+    addScheduleToCalendar = () => {
+        Api.post("/api/StudentGroups/HandleTimetableForGroup", {groupName: this.state.groupName})
+            .then(result => console.log(result))
+            .catch(reason => console.log(reason.message));
+    };
+    
   render () {
+    const isButtonVisible = this.state.groupName.length > 0;
     return (
       <div>
         <p>
@@ -15,11 +30,12 @@ export class Home extends Component {
             your Google account.
         </p>
           <strong>Try submitting this group: KrDzIs3011Io</strong>
-        <form method="POST" action="/api/StudentGroups/HandleTimetableForGroup">
-            <label htmlFor="groupName">Student group name</label>
-            <input type="text" name="groupName"/>
-            <input type="submit"/>
-        </form>
+          <div className="container">
+              <input onChange={this.onTextInput} name="groupNameInput" type="text" placeholder="Enter your student group name"/>
+              {isButtonVisible && (
+                  <button onClick={this.addScheduleToCalendar}>Go!</button>
+              )}
+          </div>
       </div>
     );
   }
