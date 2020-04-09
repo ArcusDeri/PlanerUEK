@@ -41,6 +41,7 @@ namespace PlanerUek.Storage.Extensions
         public static async Task<bool> Delete(this CloudTable table, string partitionKey, string rowKey)
         {
             var entity = new TableEntity(partitionKey, rowKey);
+            entity.ETag = "*";
             var tableOperation = TableOperation.Delete(entity);
             try
             {
@@ -61,6 +62,7 @@ namespace PlanerUek.Storage.Extensions
             var batchOperation = new TableBatchOperation();
             foreach (var row in result)
             {
+                row.ETag = "*";
                 batchOperation.Delete(row);
             }
 
