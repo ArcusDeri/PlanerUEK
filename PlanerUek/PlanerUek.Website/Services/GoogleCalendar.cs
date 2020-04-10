@@ -13,6 +13,7 @@ using Google.Apis.Requests;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using PlanerUek.Website.Configuration;
+using PlanerUek.Website.Exceptions;
 
 namespace PlanerUek.Website.Services
 {
@@ -35,6 +36,10 @@ namespace PlanerUek.Website.Services
                 await AddEventsToCalendar(calendarEvents);
                 return new CalendarUpdateResult(true);
             }
+            catch (GoogleAuthorizationException)
+            {
+                return new CalendarUpdateResult("Google authorization failed.");
+            }
             catch (Exception e)
             {
                 return new CalendarUpdateResult(e.Message);
@@ -43,7 +48,7 @@ namespace PlanerUek.Website.Services
 
         private async Task AddEventsToCalendar(IEnumerable<Event> calendarEvents)
         {
-            var calendarService = GetCalendarService();
+            var calendarService = await GetCalendarService();
             var batchRequest = new BatchRequest(calendarService);
 
             foreach (var calendarEvent in calendarEvents.Take(3)) //TODO: Take all at the end of project
@@ -64,9 +69,9 @@ namespace PlanerUek.Website.Services
             await batchRequest.ExecuteAsync();
         }
         
-        private CalendarService GetCalendarService()
+        private async Task<CalendarService> GetCalendarService()
         {
-            var credentials = AuthorizeGoogleUser();
+            var credentials = await AuthorizeGoogleUser();
             var service = new CalendarService(new BaseClientService.Initializer()
                 {
                     HttpClientInitializer = credentials,
@@ -100,15 +105,26 @@ namespace PlanerUek.Website.Services
             };
         }
 
-        private UserCredential AuthorizeGoogleUser()
+        private async Task<UserCredential> AuthorizeGoogleUser()
         {
+            UserCredential credential;
+            var cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(120));
             var cred = new ClientSecrets()
             {
                 ClientId = _planerConfig.GetGoogleClientId(),
                 ClientSecret = _planerConfig.GetGoogleClientSecret()
             };
-            return GoogleWebAuthorizationBroker.AuthorizeAsync(cred, new[] {CalendarService.Scope.Calendar}, "user",
-                CancellationToken.None, _dataStore).Result;
+            try
+            {
+                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(cred, new[] { CalendarService.Scope.Calendar }, "user",
+                    cancellationTokenSource.Token, _dataStore);
+                return credential;
+            }
+            catch (Exception e)
+            {
+                throw new GoogleAuthorizationException();
+            };
         }
     }
 }
