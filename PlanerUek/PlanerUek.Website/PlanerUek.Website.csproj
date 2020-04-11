@@ -16,6 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.Auth.Mvc" Version="1.45.0" />
     <PackageReference Include="Google.Apis.Calendar.v3" Version="1.44.1.1893" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.1" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
@@ -24,6 +25,7 @@
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Content Remove="$(SpaRoot)**" />
+    <Content Include="ClientApp\src\components\Setup.js" />
     <Content Include="ClientApp\src\utils\api.js" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />

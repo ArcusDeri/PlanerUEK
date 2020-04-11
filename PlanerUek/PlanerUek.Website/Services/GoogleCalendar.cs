@@ -14,6 +14,11 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using PlanerUek.Website.Configuration;
 using PlanerUek.Website.Exceptions;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Responses;
+using Google.Apis.Auth.OAuth2.Web;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace PlanerUek.Website.Services
 {
@@ -21,63 +26,45 @@ namespace PlanerUek.Website.Services
     {
         private readonly IPlanerConfig _planerConfig;
         private readonly IDataStore _dataStore;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public GoogleCalendar(IPlanerConfig planerConfig, IDataStore dataStore)
+        public GoogleCalendar(IPlanerConfig planerConfig, IDataStore dataStore, IHttpContextAccessor httpContextAccessor)
         {
             _planerConfig = planerConfig;
             _dataStore = dataStore;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<CalendarUpdateResult> AddStudentGroupSchedule(StudentGroupSchedule schedule)
+        public async Task<CalendarUpdateResult> AddStudentGroupSchedule(CalendarService calendarService,
+            StudentGroupSchedule schedule)
         {
             var calendarEvents = ResolveEventsFromSchedule(schedule);
             try
             {
-                await AddEventsToCalendar(calendarEvents);
+                var batchRequest = new BatchRequest(calendarService);
+
+                foreach (var calendarEvent in calendarEvents.Take(3)) //TODO: Take all at the end of project
+                {
+                    batchRequest.Queue(calendarService.Events.Insert(calendarEvent, "primary"),
+                        async (Event content, RequestError error, int index, HttpResponseMessage message) =>
+                        {
+                            var messageContent = await message.Content.ReadAsStringAsync();
+                            if (error is null)
+                            {
+                                return;
+                            }
+                        
+                            throw new Exception(error.Message);
+                        });
+                }
+
+                await batchRequest.ExecuteAsync();
                 return new CalendarUpdateResult(true);
-            }
-            catch (GoogleAuthorizationException)
-            {
-                return new CalendarUpdateResult("Google authorization failed.");
             }
             catch (Exception e)
             {
                 return new CalendarUpdateResult(e.Message);
             }
-        }
-
-        private async Task AddEventsToCalendar(IEnumerable<Event> calendarEvents)
-        {
-            var calendarService = await GetCalendarService();
-            var batchRequest = new BatchRequest(calendarService);
-
-            foreach (var calendarEvent in calendarEvents.Take(3)) //TODO: Take all at the end of project
-            {
-                batchRequest.Queue(calendarService.Events.Insert(calendarEvent, "primary"),
-                    async (Event content, RequestError error, int index, HttpResponseMessage message) =>
-                    {
-                        var messageContent = await message.Content.ReadAsStringAsync();
-                        if (error is null)
-                        {
-                            return;
-                        }
-                        
-                        throw new Exception(error.Message);
-                    });
-            }
-
-            await batchRequest.ExecuteAsync();
-        }
-        
-        private async Task<CalendarService> GetCalendarService()
-        {
-            var credentials = await AuthorizeGoogleUser();
-            var service = new CalendarService(new BaseClientService.Initializer()
-                {
-                    HttpClientInitializer = credentials,
-                    ApplicationName = _planerConfig.GetApplicationName()
-                });
-            return service;
         }
 
         private IEnumerable<Event> ResolveEventsFromSchedule(StudentGroupSchedule schedule)
@@ -102,28 +89,6 @@ namespace PlanerUek.Website.Services
             {
                 TimeZone = "Europe/Warsaw",
                 DateTime = new DateTime(date.Year, date.Month, date.Day, hourDate.Hour, hourDate.Minute, 0)
-            };
-        }
-
-        private async Task<UserCredential> AuthorizeGoogleUser()
-        {
-            UserCredential credential;
-            var cancellationTokenSource = new CancellationTokenSource();
-            cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(120));
-            var cred = new ClientSecrets()
-            {
-                ClientId = _planerConfig.GetGoogleClientId(),
-                ClientSecret = _planerConfig.GetGoogleClientSecret()
-            };
-            try
-            {
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(cred, new[] { CalendarService.Scope.Calendar }, "user",
-                    cancellationTokenSource.Token, _dataStore);
-                return credential;
-            }
-            catch (Exception e)
-            {
-                throw new GoogleAuthorizationException();
             };
         }
     }

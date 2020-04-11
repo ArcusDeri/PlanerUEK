@@ -10,5 +10,6 @@
         string GetGoogleDataStoreConnectionString();
         string GetApplicationName();
         string GetCorsOrigin();
+        string GetRedirectUriForGoogleAuth();
     }
 }

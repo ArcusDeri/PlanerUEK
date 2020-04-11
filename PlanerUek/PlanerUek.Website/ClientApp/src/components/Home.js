@@ -3,20 +3,30 @@ import Api from "../utils/api";
 
 export class Home extends Component {
     state = {
-        groupName: ''
+        groupName: '',
+        userId: ''
     };
     
+    componentDidMount() {
+        if (this.props.location.search.includes("refresh=true")){
+            Api.post("/api/StudentGroups/HandleTimetableForClient", {}).then(result => console.log(result));
+        }
+    }
+
     onTextInput = event => {
-        const groupName = event.target.value;
-        this.setState({groupName});
+        const value = event.target.value;
+        this.setState({[event.target.name]: value});
     };
     
-    addScheduleToCalendar = () => {
-        if (this.state.groupName.length === 0){
+    addScheduleForGroup = () => {
+        if (this.state.groupName.length === 0 || this.state.userId.length === 0){
             return;
         }
-        Api.post("/api/StudentGroups/HandleTimetableForGroup", {groupName: this.state.groupName})
-            .then(result => console.log(result))
+        Api.post("/api/StudentGroups/HandleTimetableForClient", {...this.state})
+            .then(result => {
+                console.log(result);
+                window.location = result.authorizationEndpoint;
+            })
             .catch(reason => console.log(reason.message));
     };
     
@@ -34,11 +44,15 @@ export class Home extends Component {
           <strong>Try submitting this group: KrDzIs3011Io</strong>
           <div className="input-group">
               <div className="input-group-prepend">
+                  <span className="input-group-text" id="">Your Google account email</span>
+              </div>
+              <input onChange={this.onTextInput} className="form-control" name="userId" type="text"/>
+              <div className="input-group-prepend">
                   <span className="input-group-text" id="">Your student group name</span>
               </div>
-              <input onChange={this.onTextInput} className="form-control" name="groupNameInput" type="text"/>
+              <input onChange={this.onTextInput} className="form-control" name="groupName" type="text"/>
               <div className="input-group-append">
-                  <button className="btn btn-primary" type="button" onClick={this.addScheduleToCalendar}>Go!</button>
+                  <button className="btn btn-primary" type="button" onClick={this.addScheduleForGroup}>Go!</button>
               </div>
           </div>
       </div>

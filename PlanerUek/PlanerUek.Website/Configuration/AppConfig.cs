@@ -20,5 +20,6 @@ namespace PlanerUek.Website.Configuration
         public string GetGoogleDataStoreConnectionString() => _config["PlanerUek:TableStorage:GoogleDataStoreConnectionString"];
         public string GetApplicationName() => _config["PlanerUek:ApplicationName"];
         public string GetCorsOrigin() => _config["PlanerUek:CorsOrigin"];
+        public string GetRedirectUriForGoogleAuth() => _config["PlanerUek:GoogleAuthRedirectUri"];
     }
 }

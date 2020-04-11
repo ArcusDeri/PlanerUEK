@@ -4,6 +4,7 @@
     {
         public bool IsSuccess { get; }
         public string ErrorMessage { get; }
+        public string AuthorizationEndpoint { get; set; }
         
         public CalendarUpdateResult(bool isSuccess)
         {

@@ -1,3 +1,4 @@
+using System;
 using Google.Apis.Util.Store;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +33,15 @@ namespace PlanerUek.Website
             var studentGroupScheduleEndpointTemplate = _planerConfig.GetStudentGroupScheduleTemplate();
             var googleDataStoreConnectionString = _planerConfig.GetGoogleDataStoreConnectionString();
 
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromSeconds(120);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             services.AddCors();
+            services.AddHttpContextAccessor();
             services.AddControllersWithViews();
             services.AddTransient<IPlanerConfig, AppConfig>();
             services.AddTransient<IGoogleCalendar, GoogleCalendar>();
@@ -64,10 +73,11 @@ namespace PlanerUek.Website
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
             app.UseRouting();
+            app.UseSession();
             app.UseCors(builder => builder
-                .WithOrigins(_planerConfig.GetCorsOrigin())
+                //.WithOrigins(_planerConfig.GetCorsOrigin(), "https://accounts.google.com")
+                .AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod());
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
