@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Table;
 using PlanerUek.Storage.Models;
@@ -11,10 +12,16 @@ namespace PlanerUek.Storage.Extensions
         public static async Task<TResult> Retrieve<TResult>(this CloudTable table, string partitionKey, string rowKey) where TResult : ITableEntity
         {
             var tableOperation = TableOperation.Retrieve<TResult>(partitionKey, rowKey);
-            var operationResult = await table.ExecuteAsync(tableOperation);
-            var result = (TResult) operationResult.Result;
-
-            return result;
+            try
+            {
+                var operationResult = await table.ExecuteAsync(tableOperation);
+                var result = (TResult) operationResult.Result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                return default;
+            }
         }
         
         public static async Task<object> Retrieve(this CloudTable table, string partitionKey, string rowKey)
@@ -26,7 +33,7 @@ namespace PlanerUek.Storage.Extensions
 
         public static async Task<bool> Insert(this CloudTable table, TableEntity entity)
         {
-            var tableOperation = TableOperation.Insert(entity);
+            var tableOperation = TableOperation.InsertOrReplace(entity);
             try
             {
                 await table.ExecuteAsync(tableOperation);
