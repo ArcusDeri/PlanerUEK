@@ -4,12 +4,27 @@ import Api from "../utils/api";
 export class Home extends Component {
     state = {
         groupName: '',
-        userId: ''
+        userId: '',
+        successMessage: '',
+        errorMessage: ''
     };
     
     componentDidMount() {
         if (this.props.location.search.includes("refresh=true")){
-            Api.post("/api/StudentGroups/HandleTimetableForClient", {}).then(result => console.log(result));
+            window.history.pushState("", "", '/');
+            Api.post("/api/StudentGroups/HandleTimetableForClient", {}).then(result => {
+                if (!result){
+                    this.setState({errorMessage: "Unknown error occured."});
+                    return;
+                }
+                
+                if (result.isSuccess){
+                    this.setState({successMessage: "Schedule saved successfully!"});
+                    return;
+                }
+                
+                this.setState({errorMessage: result.errorMessage});
+            });
         }
     }
 
@@ -33,6 +48,16 @@ export class Home extends Component {
   render () {
     return (
       <div>
+          {this.state.successMessage.length > 0 && (
+            <div className="alert alert-success" role="alert">
+              {this.state.successMessage}
+            </div>
+          )}
+          {this.state.errorMessage.length > 0 && (
+            <div className="alert alert-danger" role="alert">
+                {this.state.errorMessage}
+            </div>  
+          )}
         <p>
             This application integrates your student group schedule with your Google Calendar. Type in your student group name
             (the same you can find at <a href="http://planzajec.uek.krakow.pl/">planzajec.uek.krakow.pl</a>). The application
