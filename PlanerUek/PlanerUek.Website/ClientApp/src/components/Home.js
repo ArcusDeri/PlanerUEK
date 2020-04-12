@@ -42,7 +42,7 @@ export class Home extends Component {
                 console.log(result);
                 window.location = result.authorizationEndpoint;
             })
-            .catch(reason => console.log(reason.message));
+            .catch(reason => this.setState({errorMessage: reason.message}));
     };
     
   render () {
